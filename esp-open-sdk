@@ -1,0 +1,48 @@
+#!/bin/sh
+
+: ${ESPPORT:=/dev/ttyUSB0}
+: ${ESPIMAGE:=esp-open-sdk}
+
+add_group_ids() {
+groups |
+	tr ' ' '\n' |
+	xargs getent group |
+	cut -f3 -d: |
+	sed '1d; s/^/--group-add /'
+}
+
+docker_args=()
+cmd_args=()
+args_for_cmd=0
+
+for arg in "$@"; do
+	if [[ $arg = "--" ]]; then
+		args_for_cmd=1
+		continue
+	fi
+
+	if [[ $args_for_cmd = 0 ]]; then
+		docker_args+=("$arg")
+	else
+		cmd_args+=("$arg")
+	fi
+done
+
+if [[ $args_for_cmd = 0 ]]; then
+	cmd_args=("${docker_args[@]}")
+	docker_args=()
+fi
+
+exec docker run \
+	--rm \
+	--device $ESPPORT \
+	-v /etc/passwd:/etc/passwd \
+	-v /etc/group:/etc/group \
+	-v $HOME:$HOME \
+	-u $UID \
+	$(add_group_ids) \
+	-w $PWD \
+	"${docker_args[@]}" \
+	$ESPIMAGE \
+	"${cmd_args[@]}"
+
