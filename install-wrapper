@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cp /usr/lib/esp-open-sdk/esp-open-sdk "/target/esp-sdk"
-chmod 755 "$1/esp-sdk"
+chmod 755 "/target/esp-sdk"
