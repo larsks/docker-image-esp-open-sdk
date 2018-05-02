@@ -33,9 +33,13 @@ if [[ $args_for_cmd = 0 ]]; then
 	docker_args=()
 fi
 
+if [[ -c $ESPPORT ]]; then
+	ESPPORT_FLAGS="--device $ESPPORT:/dev/ttyACM0"
+fi
+
 exec docker run \
 	--rm \
-	--device $ESPPORT \
+	$ESPPORT_FLAGS \
 	-v /etc/passwd:/etc/passwd \
 	-v /etc/group:/etc/group \
 	-v $HOME:$HOME \
