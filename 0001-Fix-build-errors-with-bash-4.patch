@@ -1,0 +1,27 @@
+From 64d4a235477672d9cebe59e1f00133e8c96631be Mon Sep 17 00:00:00 2001
+From: docker <docker>
+Date: Wed, 16 Oct 2019 20:30:10 +0000
+Subject: [PATCH] Fix build errors with bash >= 4
+
+There is a faulty comparison in crosstool-NG/configure.ac that fails
+if bash's major version != 3.
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 1177ee7..92cd5c3 100644
+--- a/Makefile
++++ b/Makefile
+@@ -146,7 +146,7 @@ crosstool-NG/ct-ng: crosstool-NG/bootstrap
+ 
+ _ct-ng:
+ 	./bootstrap
+-	./configure --prefix=`pwd`
++	./configure --prefix=`pwd` --with-bash=/bin/bash
+ 	$(MAKE) MAKELEVEL=0
+ 	$(MAKE) install MAKELEVEL=0
+ 
+-- 
+2.21.0
+
